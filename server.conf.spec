@@ -1,4 +1,4 @@
-#   Version 9.4.4
+#   Version 9.4.7
 #
 ############################################################################
 # OVERVIEW
@@ -591,6 +591,15 @@ cgroup_location = <string>
   contents of /proc/<pid>/cgroup and /proc/<pid>/mountinfo.
 * NOTE: Do not change this setting unless instructed to do so by Splunk Support.
 * Default: auto
+
+allowed_unarchive_commands = <comma-separated list>
+* A list of *nix shell commands that the 'unarchive_cmd' setting
+  in the props.conf configuration file can run. 
+* This setting is only applicable when 'unarchive_cmd_start_mode'
+  has a value of "direct".
+* NOTE: Leaving this setting with no value means that 'unarchive_cmd'
+  can run any shell command, which is a potential security risk.
+* Default: Empty string ('unarchive_cmd' can use any shell command.)
 
 ############################################################################
 # Configuration Change Tracker
