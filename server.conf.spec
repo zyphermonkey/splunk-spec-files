@@ -1,4 +1,4 @@
-#   Version 9.4.7
+#   Version 9.4.9
 #
 ############################################################################
 # OVERVIEW
@@ -1826,6 +1826,14 @@ sslAltNameToCheck =  <alternateName1>, <alternateName2>, ...
 * See the description of 'sslAltNametoCheck' under the [sslConfig] stanza
   for details on this setting.
 * Default: splunkbase.splunk.com, apps.splunk.com, cdn.apps.splunk.com
+
+splunkbaseAppsDumpUrl = <string>
+* JSON file link with data on current Splunkbase apps.
+* Default: https://cdn.splunkbase.splunk.com/public/report/apps_dump.json
+
+archivedSplunkbaseAppsDumpUrl = <string>
+* JSON file link with data on archived Splunkbase apps.
+* Default: https://cdn.splunkbase.splunk.com/public/report/archived_apps_dump.json
 
 cipherSuite = <string>
 * See the description of 'cipherSuite' under the [sslConfig] stanza

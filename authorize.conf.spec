@@ -1,4 +1,4 @@
-#   Version 9.4.7
+#   Version 9.4.9
 #
 ############################################################################
 # OVERVIEW
@@ -229,8 +229,12 @@ srchDiskQuota = <integer>
   not constantly check the quota.
 * Exceeding this quota causes the search to be auto-finalized immediately,
   even if there are results that have not yet been returned.
-* When set to 0, this setting does not limit the amount of disk space that
+* A value of 0 means there is no limit to the amount of disk space that
   search jobs for a user with the role can use.
+* To make the space that temporary files from a search
+  job use count toward a user's total disk usage, give the
+  'include_temp_dirs_in_disk_usage' setting in the limits.conf
+  configuration file a value of "true".
 * Default: 100
 
 srchJobsQuota = <integer>
@@ -496,16 +500,6 @@ ephemeralExpiration = <relative-time-modifier>
 * Lets a user use the 'delete' command.
 * NOTE: The 'delete' command does not actually delete the raw data on disk.
   Instead, it masks the data (via the index) from showing up in search results.
-
-[capability::edit_dispatch_as]
-* Lets a user change the value of the 'dispatchAs' setting for a
-  saved search to "user".
-* Without this capability, users can only create saved searches that
-  run in the context of the saved search owner.
-* NOTE: Assign this capability to roles for high-privileged users only. When
-  'dispatchAs' has a value of "user", searches run in the context of
-  the user who runs the search. A low-privileged user that
-  holds a role with this capability can potentially be a security risk.
 
 [capability::edit_messages]
 * Lets a user create and delete system messages that appear in the Splunk Web navigation bar.

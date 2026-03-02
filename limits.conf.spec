@@ -1,4 +1,4 @@
-#   Version 9.4.7
+#   Version 9.4.9
 #
 ############################################################################
 # OVERVIEW
@@ -1433,6 +1433,16 @@ write_multifile_results_out = <boolean>
   already be split into appropriate size files.
 * Default: true
 
+include_temp_dirs_in_disk_usage = <boolean>
+* Whether or not the size of temporary directories that user searches
+  create counts toward the total disk usage for the user who runs the
+  search.
+* A value of "true" means that the Splunk platform counts the size of
+  temporary directories that user searches create.
+* A value of "false" means that the Splunk platform does not count the
+  size of temporary directories that user searches create.
+* Default: false
+
 ############################################################################
 # Search process
 ############################################################################
@@ -1487,6 +1497,21 @@ idle_process_reaper_period = auto | <number>
 * Has no effect on Windows if 'search_process_mode' is not set to "auto" or
   if 'max_searches_per_process' is set to "0" or "1".
 * Default: 30
+
+idle_process_hostwide_memory_threshold = auto | <positive integer>
+* The threshold, specified as a percentage of allowed hostwide memory usage, 
+  that determines whether a search process can enter the pool of preforked 
+  search processes and become idle for reuse.
+* When total memory used by hostwide processes exceeds this threshold,
+  instead of idling a search process after job completion, the system 
+  terminates and doesn't reuse the search process when the total number of
+  idle search processes reaches the 'max_idle_process_count' limit,
+  or when the pool size reaches the 'max_search_process_pool' limit.
+* A value of "auto" lets the system automatically adjust the threshold.
+* This setting applies only when 'search_process_mode' has a value of "auto",
+  and has no effect on Windows platforms.
+* The valid value range for this threshold is from 1 to 100.
+* Default: 90
 
 launcher_max_idle_checks = auto | <integer>
 * Specifies the number of idle processes that are inspected before giving up

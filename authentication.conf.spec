@@ -1,4 +1,4 @@
-#   Version 9.4.7
+#   Version 9.4.9
 #
 # This file contains possible settings and values for configuring
 # authentication via authentication.conf.
@@ -381,6 +381,12 @@ python.version = {default|python|python2|python3|python3.7|python3.9|latest}
   supported. It is related to a feature that is still under development.
 * Optional.
 * Default: Not set; uses the system-wide Python version.
+
+python.required = <comma-separated list>
+* This setting cannot be configured in this version of the Splunk platform. 
+  Configuring it has no effect.
+* If you want to set the version of Python that components in this
+  instance use, refer to and use the 'python.version' setting instead.
 
 scriptSearchFilters = [1|0]
 * Whether or not to call the script to add search filters.
@@ -857,6 +863,12 @@ python.version = {default|python|python2|python3|python3.7|python3.9|latest}
   supported. It is related to a feature that is still under development.
 * Optional.
 * Default: Not set; uses the system-wide Python version.
+
+python.required = <comma-separated list>
+* This setting cannot be configured in this version of the Splunk platform. 
+  Configuring it has no effect.
+* If you want to set the version of Python that components in this
+  instance use, refer to and use the 'python.version' setting instead.
 
 scriptTimeout = <string>
 * The maximum time the script can run before the auth system forcefully terminates it.

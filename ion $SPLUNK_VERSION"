@@ -1,0 +1,377 @@
+[1mdiff --git a/agent_management.conf b/agent_management.conf[m
+[1mindex 01b01a5..458fae9 100644[m
+[1m--- a/agent_management.conf[m
+[1m+++ b/agent_management.conf[m
+[36m@@ -23,7 +23,7 @@[m [mpolling_interval = 500ms[m
+ [splunkd_client][m
+ connection_pool_size = 10[m
+ request_timeout = 60s[m
+[31m-connection_keep_alive = 5m[m
+[32m+[m[32mconnection_keep_alive = 11s[m
+ [m
+ [settings_sync][m
+ polling_interval = 5m[m
+[1mdiff --git a/agent_management.conf.spec b/agent_management.conf.spec[m
+[1mindex a7ad123..c0f9717 100644[m
+[1m--- a/agent_management.conf.spec[m
+[1m+++ b/agent_management.conf.spec[m
+[36m@@ -76,10 +76,13 @@[m [mrequest_timeout = <string>[m
+ * Default: 60s.[m
+ [m
+ connection_keep_alive = <string>[m
+[31m-* The maximum amount of time an idle connection made by the Agent Manager to splunkd remains idle before closing.[m
+[32m+[m[32m* The maximum amount of time an idle connection made by the[m
+[32m+[m[32m  Agent Manager to splunkd remains idle before closing.[m
+[32m+[m[32m* This value must be set lower than the 'busyKeepAliveIdleTimeout'[m
+[32m+[m[32m  setting in server.conf, '[httpServer]' stanza.[m
+ * Valid values are numbers followed by a time unit.[m
+[31m-* Valid time units are "ms", "s", "m", "h".[m
+[31m-* Default: 5m.[m
+[32m+[m[32m* Valid time units are "ms", "s", "m", and "h".[m
+[32m+[m[32m* Default: 11s[m
+ [m
+ [settings_sync][m
+ * The Agent Management helper process settings for the settings synchronization subsystem.[m
+[1mdiff --git a/authentication.conf.spec b/authentication.conf.spec[m
+[1mindex 43373cc..91f6a1e 100644[m
+[1m--- a/authentication.conf.spec[m
+[1m+++ b/authentication.conf.spec[m
+[36m@@ -738,6 +738,18 @@[m [msignedAssertion = <boolean>[m
+ * This setting is optional.[m
+ * Default: true[m
+ [m
+[32m+[m[32msignatureRawPubKey = <boolean>[m
+[32m+[m[32m* Whether or not the signatures in the SAML response that the Splunk platform[m
+[32m+[m[32m  sends to a SAML identity provider (IdP) contain a KeyValue element that[m
+[32m+[m[32m  contains the raw public key.[m
+[32m+[m[32m* The Splunk platform populates this field during SAML configuration,[m
+[32m+[m[32m  and can send it as part of any assertion to the SAML IdP.[m
+[32m+[m[32m* For security reasons, if the IdP supports it, the Splunk platform should not[m
+[32m+[m[32m  supply this value. However, if the IdP does require the value to complete the[m
+[32m+[m[32m  authentication request, give this setting a value of "true".[m
+[32m+[m[32m* This setting is optional.[m
+[32m+[m[32m* Default: false[m
+[32m+[m
+ attributeQuerySoapPassword = <password>[m
+ * The password to be used when making an attribute query request.[m
+ * Attribute query requests are made using SOAP using basic authentication[m
+[1mdiff --git a/federated.conf b/federated.conf[m
+[1mindex df07ad3..672bec4 100644[m
+[1m--- a/federated.conf[m
+[1m+++ b/federated.conf[m
+[36m@@ -29,6 +29,15 @@[m [mremoteEventsDownloadRetryCountMax = 20[m
+ remoteEventsDownloadRetryTimeoutMs = 1000[m
+ max_preview_generation_duration = 0[m
+ max_preview_generation_inputcount = 0[m
+[32m+[m[32menable_streaming_optimization = false[m
+[32m+[m[32mfederated_search_remote_ttl = 600[m
+[32m+[m[32mallowAstProjectionElim = false[m
+[32m+[m[32mallowAstPredicateMerge = false[m
+[32m+[m[32mallowAstInsertRedistributeCommand = false[m
+[32m+[m[32mallowAstReplaceChartCmdsWithTstats = false[m
+[32m+[m[32mallowAstReplaceDatamodelStatsCmdsWithTstats = false[m
+[32m+[m[32mallowAstReplaceTableWithFields = false[m
+[32m+[m[32mallowAstReplaceSdselectWithSdsql = false[m
+ [m
+ [s2s_standard_mode_unsupported_command:metadata][m
+ [m
+[1mdiff --git a/federated.conf.spec b/federated.conf.spec[m
+[1mindex 3a560f7..7a5b9cb 100644[m
+[1m--- a/federated.conf.spec[m
+[1m+++ b/federated.conf.spec[m
+[36m@@ -184,6 +184,90 @@[m [mcontrolCommandsFeatureEnabled = <boolean>[m
+ * Change this setting only when directed to do so by Splunk Support.[m
+ * Default: true[m
+ [m
+[32m+[m[32mallowAstProjectionElim = <boolean>[m
+[32m+[m[32m* Controls whether Splunk software enables projection elimination[m
+[32m+[m[32m  optimization on the federated search head.[m
+[32m+[m[32m* A value of "true" means that Splunk software enables projection[m
+[32m+[m[32m  elimination optimization.[m
+[32m+[m[32m* A value of "false" means that Splunk software does not enable[m
+[32m+[m[32m  projection elimination optimization.[m
+[32m+[m[32m* For more information, search for 'search_optimization::projection_elimination'[m
+[32m+[m[32m  in the limits.conf.spec file.[m
+[32m+[m[32m* CAUTION: Change this setting only when Splunk Support directs you to do so.[m
+[32m+[m[32m* Default: false[m
+[32m+[m
+[32m+[m[32mallowAstPredicateMerge = <boolean>[m
+[32m+[m[32m* Controls whether Splunk software enables predicate merge optimization[m
+[32m+[m[32m  on the federated search head.[m
+[32m+[m[32m* A value of "true" means that Splunk software enables predicate merge[m
+[32m+[m[32m  optimization.[m
+[32m+[m[32m* A value of "false" means that Splunk software does not enable predicate[m
+[32m+[m[32m  merge optimization.[m
+[32m+[m[32m* For more information, search for 'search_optimization::predicate_merge'[m
+[32m+[m[32m  in the limits.conf.spec file.[m
+[32m+[m[32m* CAUTION: Change this setting only when Splunk Support directs you to do so.[m
+[32m+[m[32m* Default: false[m
+[32m+[m
+[32m+[m[32mallowAstInsertRedistributeCommand = <boolean>[m
+[32m+[m[32m* Controls whether Splunk software enables a search language optimization[m
+[32m+[m[32m  that inserts a 'redistribute' command on the federated search head.[m
+[32m+[m[32m* A value of "true" means that Splunk software enables this optimization.[m
+[32m+[m[32m* A value of "false" means that Splunk software does not enable this[m
+[32m+[m[32m  optimization.[m
+[32m+[m[32m* For more information, search for[m[41m [m
+[32m+[m[32m  'search_optimization::insert_redistribute_command' in the limits.conf.spec[m[41m [m
+[32m+[m[32m  file.[m
+[32m+[m[32m* CAUTION: Change this setting only when Splunk Support directs you to do so.[m
+[32m+[m[32m* Default: false[m
+[32m+[m
+[32m+[m[32mallowAstReplaceChartCmdsWithTstats = <boolean>[m
+[32m+[m[32m* Controls whether Splunk software enables chart replacement with 'tstats'[m
+[32m+[m[32m  optimization on the federated search head.[m
+[32m+[m[32m* A value of "true" means that Splunk software enables this optimization.[m
+[32m+[m[32m* A value of "false" means that Splunk software does not enable this[m
+[32m+[m[32m  optimization.[m
+[32m+[m[32m* For more information, search for[m[41m [m
+[32m+[m[32m  'search_optimization::replace_chart_cmds_with_tstats' in the[m[41m [m
+[32m+[m[32m  limits.conf.spec file.[m
+[32m+[m[32m* CAUTION: Change this setting only when Splunk Support directs you to do so.[m
+[32m+[m[32m* Default: false[m
+[32m+[m
+[32m+[m[32mallowAstReplaceDatamodelStatsCmdsWithTstats = <boolean>[m
+[32m+[m[32m* Controls whether Splunk software enables a search language optimization[m
+[32m+[m[32m  that replaces 'stats' commands with 'tstats' commands in '| datamodel ..[m
+[32m+[m[32m  | stats' and '| from datamodel .. | stats' Search Processing Language[m
+[32m+[m[32m  (SPL) strings.[m
+[32m+[m[32m* A value of "true" means that Splunk software enables this optimization.[m
+[32m+[m[32m* A value of "false" means that Splunk software does not enable this[m
+[32m+[m[32m  optimization.[m
+[32m+[m[32m* For more information, search for[m[41m [m
+[32m+[m[32m  'search_optimization::replace_datamodel_stats_cmds_with_tstats' in the[m[41m [m
+[32m+[m[32m  limits.conf.spec file.[m
+[32m+[m[32m* CAUTION: Change this setting only when Splunk Support directs you to do so.[m
+[32m+[m[32m* Default: false[m
+[32m+[m
+[32m+[m[32mallowAstReplaceTableWithFields = <boolean>[m
+[32m+[m[32m* Controls whether Splunk software enables a search language optimization[m
+[32m+[m[32m  that replaces the 'table' command with the 'fields' command on the federated[m[41m [m
+[32m+[m[32m  search head.[m
+[32m+[m[32m* A value of "true" means that Splunk software enables this optimization.[m
+[32m+[m[32m* A value of "false" means that Splunk software does not enable this[m
+[32m+[m[32m  optimization.[m
+[32m+[m[32m* For more information, search for[m[41m [m
+[32m+[m[32m  'search_optimization::replace_table_with_fields' in the 'limits.conf.spec'[m[41m [m
+[32m+[m[32m  file.[m
+[32m+[m[32m* CAUTION: Change this setting only when Splunk Support directs you to do so.[m
+[32m+[m[32m* Default: false[m
+[32m+[m
+[32m+[m[32mallowAstReplaceSdselectWithSdsql = <boolean>[m
+[32m+[m[32m* Controls whether Splunk software enables the substitution of the[m
+[32m+[m[32m  'sdselect' command with 'sdsql' on the federated search head.[m
+[32m+[m[32m* A value of "true" means that Splunk software enables this substitution.[m
+[32m+[m[32m* A value of "false" means that Splunk software does not enable this[m
+[32m+[m[32m  substitution.[m
+[32m+[m[32m* CAUTION: Change this setting only when Splunk Support directs you to do so.[m
+[32m+[m[32m* Default: false[m
+[32m+[m
+ previewOnRshEnabled = <boolean>[m
+ * Specifies whether search preview is activated on remote search heads when [m
+   they process federated searches.[m
+[36m@@ -243,6 +327,19 @@[m [mverbose_mode = <boolean>[m
+ * NOTE: Do not change this setting unless instructed to do so by Splunk Support.[m
+ * Default: true[m
+ [m
+[32m+[m[32menable_streaming_optimization = <boolean>[m
+[32m+[m[32m* Controls whether federated searches use pure streaming optimization.[m
+[32m+[m[32m* A value of "false" means that federated searches do not use pure streaming[m
+[32m+[m[32m  optimization. A federated search gets all matching events from the remote[m
+[32m+[m[32m  search head and builds the timeline from these events.[m
+[32m+[m[32m* A value of "true" means that if a search is a pure streaming search, Splunk[m
+[32m+[m[32m  software optimizes the search to send just enough data to display events[m
+[32m+[m[32m  and the timeline in the user interface.[m
+[32m+[m[32m* This setting needs to be enabled only on federated search heads. Remote[m
+[32m+[m[32m  search heads follow instructions from federated search heads.[m
+[32m+[m[32m* NOTE: Do not change this setting unless Splunk Support instructs you to do so.[m
+[32m+[m[32m* Default: false[m
+[32m+[m
+ max_preview_generation_duration = <unsigned integer>[m
+ * The maximum amount of time, in seconds, that the search head can spend to [m
+   generate search result previews.[m
+[36m@@ -284,6 +381,11 @@[m [mmax_preview_generation_inputcount = <unsigned integer>[m
+   searches is unlimited. [m
+ * Default: 0[m
+ [m
+[32m+[m[32mfederated_search_remote_ttl = <unsigned integer>[m
+[32m+[m[32m* The amount of time, in seconds, that Splunk software stores artifacts from[m
+[32m+[m[32m  federated searches on the remote search head after those searches complete.[m
+[32m+[m[32m* Default: 600 (10 minutes)[m
+[32m+[m
+ ############################################################################[m
+ # Configs for blocking unsupported commands in Federated Search[m
+ ############################################################################[m
+[1mdiff --git a/messages.conf b/messages.conf[m
+[1mindex 0973a29..9ff5d47 100644[m
+[1m--- a/messages.conf[m
+[1m+++ b/messages.conf[m
+[36m@@ -233,6 +233,13 @@[m [mmessage      = Appserver at %s never started up.[m
+ action       = Set `appServerProcessLogStderr` to "true" under [settings] in web.conf. Restart, try the operation again, and review splunkd.log for any messages that contain "UiAppServer - From appserver".[m
+ severity     = error[m
+ [m
+[32m+[m[32m[APPSERVER:SECURITY_RISK_EMPTY_WEB_CLIENT_NETLOC_SCHEME][m
+[32m+[m[32mmessage      = Security risk warning: Found a "true" value for 'enableSplunkClientNetloc', but no values for either 'allowedSplunkWebClientNetlocList' or 'allowedSplunkWebClientSchemeList' in the web.conf configuration file. You must configure at least one of these settings if 'enableSplunkWebClientNetloc' has a value of "true".[m
+[32m+[m[32mseverity     = warn[m
+[32m+[m[32mcapabilities = edit_web_settings[m
+[32m+[m[32mtarget = ui,log[m
+[32m+[m
+[32m+[m
+ [m
+ [APPEND][m
+ name         = Append Processor[m
+[36m@@ -5490,6 +5497,11 @@[m [mseverity     = error[m
+ message      = Internal server error.[m
+ severity     = error[m
+ [m
+[32m+[m[32m[REST_SEARCH:INVALID_FEDERATED_FSH_ANNEX][m
+[32m+[m[32mmessage      = The internal 'fsh_annex' argument has invalid values.[m
+[32m+[m[32mseverity     = error[m
+[32m+[m[32maction       = Try your search again in a moment. If the error persists contact Splunk Support.[m
+[32m+[m
+ [REST_SEARCH:INVALID_ABORT_ON][m
+ message      = Invalid abort_on.[m
+ severity     = error[m
+[36m@@ -8342,6 +8354,11 @@[m [mseverity     = warn[m
+ action       = Change 'unarchive_cmd_start_mode' to 'direct'.[m
+ target       = log[m
+ [m
+[32m+[m[32m[UNARCHIVE_COMMAND:INVALID_CMD__S][m
+[32m+[m[32mmessage      = The unarchive command='%s' is not available.[m
+[32m+[m[32mseverity     = error[m
+[32m+[m[32maction       = Choose a command from the list of 'allowed_unarchive_commands' in the server.conf configuration file.[m
+[32m+[m[32mtarget       = log[m
+ [m
+ [m
+ [QUARANTINED_LOOKUPS][m
+[1mdiff --git a/server.conf.spec b/server.conf.spec[m
+[1mindex 2048894..8a9343d 100644[m
+[1m--- a/server.conf.spec[m
+[1m+++ b/server.conf.spec[m
+[36m@@ -592,6 +592,15 @@[m [mcgroup_location = <string>[m
+ * NOTE: Do not change this setting unless instructed to do so by Splunk Support.[m
+ * Default: auto[m
+ [m
+[32m+[m[32mallowed_unarchive_commands = <comma-separated list>[m
+[32m+[m[32m* A list of *nix shell commands that the 'unarchive_cmd' setting[m
+[32m+[m[32m  in the props.conf configuration file can run.[m[41m [m
+[32m+[m[32m* This setting is only applicable when 'unarchive_cmd_start_mode'[m
+[32m+[m[32m  has a value of "direct".[m
+[32m+[m[32m* NOTE: Leaving this setting with no value means that 'unarchive_cmd'[m
+[32m+[m[32m  can run any shell command, which is a potential security risk.[m
+[32m+[m[32m* Default: Empty string ('unarchive_cmd' can use any shell command.)[m
+[32m+[m
+ ############################################################################[m
+ # Configuration Change Tracker[m
+ ############################################################################[m
+[1mdiff --git a/splunkrc_cmds.xml b/splunkrc_cmds.xml[m
+[1mindex 5264130..5cdf979 100644[m
+[1m--- a/splunkrc_cmds.xml[m
+[1m+++ b/splunkrc_cmds.xml[m
+[36m@@ -1800,11 +1800,13 @@[m [mThe package might be referenced either via a url or a local path.]]>[m
+                 <title><![CDATA[Validates the cluster bundle, and optionally checks whether applying the bundle will initiate a peer restart. To check the status of the bundle validation, run 'show cluster-bundle-status' on the cluster manager.]]></title>[m
+                 <optional>[m
+                     <arg name="--check-restart"><![CDATA[Pass this optional argument to check whether applying the bundle will initiate a peer restart.]]></arg>[m
+[32m+[m[32m                    <arg name="--validate-force-timeout"><![CDATA[Pass this optional argument to set the bundle validation timeout (in seconds). Once the timeout is reached, the cluster manager node will stop waiting for validation results from peers.]]></arg>[m
+                 </optional>[m
+                 <examples>[m
+                         <ex><![CDATA['./splunk validate cluster-bundle']]></ex>[m
+                         <ex><![CDATA['./splunk validate cluster-bundle -auth admin:changeme']]></ex>[m
+                         <ex><![CDATA['./splunk validate cluster-bundle --check-restart -auth admin:changeme']]></ex>[m
+[32m+[m[32m                        <ex><![CDATA['./splunk validate cluster-bundle --check-restart --validate-force-timeout 600 -auth admin:changeme']]></ex>[m
+                 </examples>[m
+             </help>[m
+             <type>edit</type>[m
+[36m@@ -6308,42 +6310,42 @@[m [mand don't reconfigure any of your Splunk settings.[m
+ [m
+         app          appname specify an app context to run the search[m
+ [m
+[31m-        batch        true    Indicates how to handle updates in preview mode.[m
+[32m+[m[32m        batch        true    indicates how to handle updates in preview mode.[m
+                              Defaults to false.[m
+ [m
+[31m-        detach       true    Triggers an asynchronous search and displays[m
+[32m+[m[32m        detach       true    triggers an asynchronous search and displays[m
+                              the job id and ttl for the search.[m
+ [m
+[31m-        header       false   Indicates whether to display a header in the table[m
+[32m+[m[32m        header       false   indicates whether to display a header in the table[m
+                              output mode.[m
+ [m
+[31m-        max_time     number  The length of time in seconds that a search job[m
+[32m+[m[32m        max_time     number  the length of time in seconds that a search job[m
+                              runs before it is finalized. Defaults to 0, which[m
+                              means no time limit.[m
+ [m
+[31m-        maxout       number  The maximum number of events to return or send to[m
+[32m+[m[32m        maxout       number  the maximum number of events to return or send to[m
+                              stdout (when exporting events). Setting this to 0[m
+                              means it will output an unlimited number of events.[m
+                              The max allowable value is 50k. Defaults to 100.[m
+ [m
+[31m-        output       value   Indicates how to display the job. Choices are:[m
+[31m-                             rawdata, table, csv, raw, json, and auto. If not [m
+[31m-                             specified, defaults to rawdata for non-transforming [m
+[31m-                             searches and table for transforming searches.[m
+[32m+[m[32m        output       value   indicates how to display the job. Choices are:[m
+[32m+[m[32m                             rawdata, table, csv, raw, and auto. If not specified,[m
+[32m+[m[32m                             defaults to rawdata for non-transforming searches[m
+[32m+[m[32m                             and table for transforming searches.[m
+ [m
+[31m-        preview      false   Indicates that reporting searches should be[m
+[32m+[m[32m        preview      false   indicates that reporting searches should be[m
+                              previewed. Defaults to true.[m
+ [m
+[31m-        timeout      number  The length of time in seconds that a search job[m
+[32m+[m[32m        timeout      number  the length of time in seconds that a search job[m
+                              is allowed to live after running. Defaults to 0,[m
+                              which means the job is cancelled immediately after[m
+                              it is run.[m
+ [m
+[31m-        wrap         false   Indicates whether to line wrap for individual lines[m
+[32m+[m[32m        wrap         false   indicates whether to line wrap for individual lines[m
+                              that are longer than the terminal width. Defaults[m
+                              to true.[m
+ [m
+[31m-       workload_pool value   The name of the workload-pool for the search to run in.[m
+[32m+[m[32m       workload_pool value   the name of the workload-pool for the search to run in.[m
+ [m
+ [m
+     See what search language is available for use in the CLI by using these[m
+[1mdiff --git a/web-features.conf b/web-features.conf[m
+[1mindex e8f5ee7..b5e9abb 100644[m
+[1m--- a/web-features.conf[m
+[1m+++ b/web-features.conf[m
+[36m@@ -191,6 +191,10 @@[m [menable_app_bar_caching = true[m
+ # Determines whether or not Splunk Web will optimize fetching details for saved searches.[m
+ enable_saved_search_pageload_optimization = true[m
+ [m
+[32m+[m[32m# CAUTION: Do not change this setting.[m
+[32m+[m[32m# Determines whether Splunk Web optimizes rendering the messages list when it loads some Splunk Web pages.[m
+[32m+[m[32menable_messages_list_performance_optimizations = true[m
+[32m+[m
+ [feature:spotlight_search][m
+ # Determines whether Splunk Web displays the Spotlight Search bar in the Settings menu.[m
+ enable_spotlight_search = true[m
+[1mdiff --git a/web-features.conf.spec b/web-features.conf.spec[m
+[1mindex 1b54c38..cf6aa7e 100644[m
+[1m--- a/web-features.conf.spec[m
+[1m+++ b/web-features.conf.spec[m
+[36m@@ -384,6 +384,17 @@[m [menable_saved_search_pageload_optimization = <boolean>[m
+ * CAUTION: Do not change this setting.[m
+ * Default: true[m
+ [m
+[32m+[m[32menable_messages_list_performance_optimizations = <boolean>[m
+[32m+[m[32m* DEPRECATED.[m
+[32m+[m[32m* Determines whether Splunk Web optimizes rendering the messages list when it[m
+[32m+[m[32m  loads some Splunk Web pages.[m
+[32m+[m[32m* A value of "true" means that Splunk Web optimizes rendering the messages[m
+[32m+[m[32m  list when it loads some Splunk Web pages.[m
+[32m+[m[32m* A value of "false" means that Splunk Web does not optimize rendering the[m
+[32m+[m[32m  messages list when it loads some Splunk Web pages.[m
+[32m+[m[32m* Do not change this setting.[m
+[32m+[m[32m* Default: true[m
+[32m+[m
+ [feature:spotlight_search][m
+ [m
+ enable_spotlight_search = <boolean>[m
