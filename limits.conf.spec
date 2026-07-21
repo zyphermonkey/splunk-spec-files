@@ -1,4 +1,4 @@
-#   Version 9.4.12
+#   Version 9.4.13
 #
 ############################################################################
 # OVERVIEW
@@ -5125,3 +5125,15 @@ view_cleartext_spl_rest = <boolean>
   when it makes calls to the "/storage/passwords" endpoint.
 * Default: true
 
+mask_encr_password = <boolean>
+* Whether or not the Splunk platform masks the 'encr_password' field in responses from the
+  "/storage/passwords" REST endpoint.
+* A value of "true" means the 'encr_password' field is replaced with a
+  static placeholder value that does not contain the actual encrypted
+  secret. The placeholder uses the "$7$" prefix followed by asterisks.
+* A value of "false" means the 'encr_password' field returns the actual
+  encrypted password value.
+* This setting applies to both direct REST API calls and the SPL 'rest'
+  command. There is no separate per-path control for this setting, unlike
+  'view_cleartext_spl_rest' which only affects the SPL 'rest' command.
+* Default: false

@@ -1,4 +1,4 @@
-#   Version 9.4.12
+#   Version 9.4.13
 #
 # This file contains possible attribute/value pairs for configuring workflow
 # actions in Splunk.
