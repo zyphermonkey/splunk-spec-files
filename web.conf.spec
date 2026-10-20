@@ -1,4 +1,4 @@
-#   Version 9.4.13
+#   Version 9.4.16
 #
 # This file contains possible attributes and values you can use to configure
 # the Splunk Web interface.
@@ -264,9 +264,12 @@ enable_secure_entity_move = <boolean>
 * Default: true
 
 enable_insecure_pdfgen = <boolean>
-* Whether or not the "/services/pdfgen/render" REST endpoint allows GET requests.
+* Whether or not the "/services/pdfgen/render" splunkd REST endpoint allows GET
+  requests.
 * If "true", allows PDFs to be generated using GET or POST requests.
 * If "false", only allows PDFs to be generated using POST requests.
+* This setting does not enable GET through Splunk Web. Splunk Web exposes this
+  endpoint through POST only.
 * Default: false
 
 simple_error_page = <boolean>
@@ -732,7 +735,7 @@ cookieSameSite = [ not_specified | lax | strict | none ]
   'tools.sessions.secure' setting to configure this behavior.
 * You must also give the 'x_frame_options_sameorigin' setting a value of "false"
   to allow for the embedding of a Splunk dashboard in the <iframe>.
-* Default: not_specified
+* Default: lax
 
 #
 # Splunk bar options
@@ -837,7 +840,7 @@ SSOMode = [permissive | strict]
 * When set to "strict": All requests to Splunk Web will be restricted to those
   originating from a trusted IP except those to endpoints that do not require
   authentication.
-* Default: strict
+* Default: lax
 
 trustedIP = <ip_addresses>
 * IP addresses of the authenticating proxy (trusted IP).

@@ -1,4 +1,4 @@
-#   Version 9.4.13
+#   Version 9.4.16
 #
 ############################################################################
 # OVERVIEW
@@ -1053,5 +1053,9 @@ ephemeralExpiration = <relative-time-modifier>
 
 [capability::edit_spl2_permissions]
 * Lets a user create and edit permissions to SPL2 items through the REST API.
+
+[capability::edit_transforms]
+* Lets a user edit transforms through the services/properties/transforms
+  endpoint.
 
 

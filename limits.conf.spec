@@ -1,4 +1,4 @@
-#   Version 9.4.13
+#   Version 9.4.16
 #
 ############################################################################
 # OVERVIEW
@@ -2432,6 +2432,15 @@ input_errors_fatal = <boolean>
   set.
 * Default: false
 
+scripted_lookup_raw_write_enforcement = [warn|block]
+* Controls how Splunk platform handles raw configuration writes through the
+  /properties/transforms and /configs/conf-transforms files, when the resulting
+  transforms.conf stanza would create or edit a scripted lookup definition and
+  the caller does not have the required external lookup capability.
+* A value of "warn" logs a warning and allows the write.
+* A value of "block" rejects the write.
+* Default: warn
+
 enable_splunkd_kv_lookup_indexing = <boolean>
 * This setting determines whether KV Store lookup indexing is performed
   during bundle replication.
@@ -2566,17 +2575,57 @@ max_mem_usage_mb = <non-negative integer>
 [outputlookup]
 
 outputlookup_check_permission = <boolean>
-* Specifies whether the outputlookup command should verify that users
-  have write permissions to CSV lookup table files.
-* outputlookup_check_permission is used in conjunction with the
-  transforms.conf setting check_permission.
-* The system only applies outputlookup_check_permission to .csv lookup
-  configurations in transforms.conf that have check_permission=true.
-* You can set lookup table file permissions in the .meta file for each lookup
-  file, or through the Lookup Table Files page in Settings. By default, only
-  users who have the admin or power role can write to a shared CSV lookup
+* Whether the outputlookup command verifies write permission before writing to
+  an existing CSV lookup table.
+* A value of "false" means Splunk platform does not verify if you have write
+  permission to a CSV lookup table before the outputlookup command writes to
+  that file.
+* A value of "true" means Splunk platform verifies if you have write permission
+  to an existing CSV lookup table before the outputlookup command writes to that
   file.
+* However, Splunk platform checks if you have write permission to the lookup
+  file only if "outputlookup_check_permission = true" and that lookup's
+  corresponding transforms.conf stanza sets "check_permission = true".
+* If that lookup's corresponding transforms.conf stanza sets "check_permission
+  = false", Splunk platform does not check if you have write permission to the
+  lookup file, even if "outputlookup_check_permission = true". If
+  "check_permission = false", the outputlookup command always performs the
+  write unless another permission check prevents it.
+* Set lookup file permissions either in the .meta file for each lookup file,
+  or through the Lookup Table Files page in Settings. By default, only users
+  who have the admin or power role can write to a shared CSV lookup file.
 * Default: false
+
+enforce_permissions_for_creating_shared_csv_lookup = [warn|block]
+* How the outputlookup command responds when a user does not have
+  write permission to create a new shared CSV lookup table file with
+  "create_context = app" or "create_context = system".
+* A value of "warn" means that the command returns a warning and creates the
+  shared CSV lookup table file.
+* A value of "block" means that the command fails and does not create the
+  shared CSV lookup table file.
+* Set lookup table file permissions either in the .meta file for each lookup
+  file, or through the Lookup Table Files page in Settings. By default, shared
+  CSV lookup table ACLs grant write permission only to users who have the admin
+  or power role.
+* This setting does not apply to existing CSV lookup table files or to private
+  CSV lookup table files created with "create_context = user".
+* Default: warn
+
+enforce_permissions_for_modifying_existing_csv_lookup = [warn|block]
+* How the outputlookup command responds when a user does not have write
+  permission to modify an existing lookup table file in comma-separated
+  values (CSV) format.
+* A value of "warn" means that the command returns a warning and modifies the
+  existing CSV lookup table file.
+* A value of "block" means that the command fails and does not modify the
+  existing CSV lookup table file.
+* If both 'outputlookup_check_permission' and
+  'transforms.conf:[<unique_transform_stanza_name>]/check_permission' have a
+  value of "true", the command blocks a denied modification regardless of
+  this setting.
+* This setting does not apply when creating a new CSV lookup table file.
+* Default: warn
 
 create_context = [app|user|system]
 * Specifies the context where the lookup file will be created for the first time.
@@ -3291,6 +3340,21 @@ enable_install_apps = <boolean>
   'admin_all_objects' or 'edit_local_apps' capabilities for app installation,
   uninstallation, creation, and update.
 * Default: false
+
+enforce_app_reload_capability_check = <boolean>
+* Whether or not the Splunk platform enforces app-management capabilities when
+  a user invokes app reload paths, including the per-app '_reload' custom
+  action through the '/services/apps/local/<app>/_reload' REST endpoint and the
+  app listing refresh path.
+* A value of "true" means the caller must have the same capability required
+  to edit local apps before the app is reloaded.
+  * When 'enable_install_apps' is "true", the caller must hold the
+    'edit_local_apps' capability.
+  * When 'enable_install_apps' is "false", the caller must satisfy the
+    default write-capability behavior for local app management, as described
+    by the 'enable_install_apps' setting above.
+* A value of "false" means this additional capability check is turned off.
+* Default: true
 
 
 [http_input]
